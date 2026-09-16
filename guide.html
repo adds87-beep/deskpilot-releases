@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeskPilot Guide</title>
+<style>
+  :root { --bg:#fbfbfa; --fg:#1d1d1f; --muted:#5b5b60; --line:#e3e3e0; --accent:#0a5fd6; --card:#ffffff; --code:#f1f1ef; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141416; --fg:#ececec; --muted:#a0a0a8; --line:#2c2c30; --accent:#6aa4ff; --card:#1c1c20; --code:#232327; }
+  }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:40px 24px 80px; }
+  h1 { font-size:34px; margin:0 0 4px; letter-spacing:-.01em }
+  .sub { color:var(--muted); margin:0 0 28px; font-size:17px }
+  h2 { font-size:22px; margin:44px 0 10px; padding-top:18px; border-top:1px solid var(--line) }
+  h3 { font-size:17px; margin:26px 0 6px }
+  p { margin:8px 0 }
+  ul, ol { margin:8px 0 8px 22px; padding:0 }
+  li { margin:5px 0 }
+  kbd, code { font:14px/1 ui-monospace, "SF Mono", Menlo, monospace; background:var(--code); padding:2px 6px; border-radius:5px }
+  .ui { font-weight:600 }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 18px; margin:14px 0 }
+  .toc { display:grid; grid-template-columns:1fr 1fr; gap:4px 24px; }
+  .toc a { text-decoration:none; color:var(--accent) }
+  a { color:var(--accent) }
+  dl { margin:8px 0 }
+  dt { font-weight:600; margin-top:12px }
+  dd { margin:2px 0 0 0; color:var(--fg) }
+  .note { color:var(--muted); font-size:15px }
+  table { border-collapse:collapse; width:100%; margin:10px 0; font-size:15px }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top }
+  th { color:var(--muted); font-weight:600 }
+  @media (max-width:600px) { .toc { grid-template-columns:1fr } h1 { font-size:28px } }
+</style>
+</head>
+<body>
+<main>
+<h1>DeskPilot</h1>
+<p class="sub">A menu bar app for a Mac that moves between desks. It keeps the Dock on one screen, and it remembers where every window and every Space belongs at each desk so it can put them back.</p>
+
+<div class="card toc">
+  <a href="#how">How it works</a>
+  <a href="#setup">Setting it up</a>
+  <a href="#menu">The menu</a>
+  <a href="#run">What happens during a run</a>
+  <a href="#profiles">Settings: Profiles</a>
+  <a href="#dock">Settings: Dock</a>
+  <a href="#general">Settings: General</a>
+  <a href="#updates">Settings: Updates</a>
+  <a href="#auto">Automatic runs</a>
+  <a href="#files">What is stored, and the log</a>
+  <a href="#limits">Known limits</a>
+  <a href="#trouble">When something is off</a>
+</div>
+
+<h2 id="how">How it works</h2>
+<p>DeskPilot does two things, and both are off until you switch them on.</p>
+<h3>Keeping the Dock on one screen</h3>
+<p>macOS moves the Dock to whichever screen your pointer last pushed against the bottom of. DeskPilot holds the pointer a couple of points clear of the bottom edge of every screen except the one you chose, so the Dock is never called anywhere else. It prevents the move rather than undoing it, and nothing runs on a timer. "Main display" means whichever screen has the menu bar, so it works at any desk.</p>
+<h3>Layouts</h3>
+<p>A <span class="ui">layout</span> is a record of one desk: the set of screens attached, every window's screen, position and size, which Space each window is on, the left-to-right order of Spaces on each screen, which Space each screen was showing, and which apps the layout is allowed to move. A layout is only offered when that same set of screens is attached, so a laptop-only layout never appears at the desk.</p>
+<p>Applying a layout puts it all back. Windows are moved through the same Accessibility interface a screen reader uses. Spaces have no such interface, so they are dragged back to their screen and their place in the order through Mission Control, which opens briefly and moves the thumbnails the way you would with a mouse. One fixed drag per Space, and each is checked afterwards.</p>
+
+<h2 id="setup">Setting it up</h2>
+<ol>
+  <li><span class="ui">Install.</span> Open the disk image from the Releases page and drag DeskPilot to Applications. Launch it from there. It is signed and notarised, so macOS opens it without a warning. It lives in the menu bar; there is no Dock icon.</li>
+  <li><span class="ui">Grant Accessibility.</span> The first launch runs a short setup and asks for Accessibility permission. This is required: moving other apps' windows and Spaces is done through macOS's Accessibility interface, and nothing works without it. Open System Settings, Privacy &amp; Security, Accessibility, and switch DeskPilot on.</li>
+  <li><span class="ui">Choose what runs automatically.</span> Setup asks whether to put your layout back automatically when you change desks, whether to start DeskPilot at login, and whether to stop the Dock moving between screens. Each can be changed later in Settings. You can Skip and do it all from Settings.</li>
+  <li><span class="ui">Save your first layout.</span> Arrange your windows and Spaces the way you want them at this desk, then choose <span class="ui">Save Current Layout…</span> from the menu. Do the same at each desk you use.</li>
+</ol>
+<p class="note">If Accessibility is listed as on but DeskPilot still says it is not granted, remove DeskPilot from the list with the minus button and add it again. macOS ties the permission to the exact copy of the app that asked for it.</p>
+
+<h2 id="menu">The menu</h2>
+<p>Click the DeskPilot icon in the menu bar. The first line names the screens attached right now.</p>
+<dl>
+  <dt>Apply "name"</dt><dd>Runs that layout now. Only layouts saved for the current set of screens are listed. If none are, the menu says so.</dd>
+  <dt>Update "name" to current</dt><dd>Re-records that layout from how things are right now. Use it after you have moved things and want the new arrangement kept.</dd>
+  <dt>Save Current Layout…</dt><dd>Records a new layout for the current screens. A window opens to name it and choose what it puts back and which apps it may move (see <a href="#profiles">Profiles</a>). Your screens flick through their Spaces for a few seconds while it looks; nothing is moved.</dd>
+  <dt>DeskPilot x.y.z is available…</dt><dd>Appears only when a newer build has been published. Opens the Updates tab.</dd>
+  <dt>Settings…</dt><dd>Opens the Settings window, described below.</dd>
+  <dt>Run Setup Again…</dt><dd>Repeats the first-launch setup.</dd>
+  <dt>Quit DeskPilot</dt><dd>Quits. The Dock lock stops with it.</dd>
+</dl>
+
+<h2 id="run">What happens during a run</h2>
+<ol>
+  <li>The screen dims and a panel appears with a <span class="ui">5 second countdown</span>. Nothing is touched until it reaches zero.</li>
+  <li>Spaces first, if the layout restores them. Mission Control opens and each Space that is on the wrong screen or in the wrong place is dragged once. Each drag is checked afterwards. Expect about ten seconds per Space.</li>
+  <li>Windows next: each managed window is moved to its saved screen, position and size.</li>
+  <li>The panel reports what it did and what it could not do, then closes. The same is written to the log.</li>
+</ol>
+<div class="card">
+  <p><span class="ui">Stopping.</span> Press <span class="ui">Stop</span> on the panel or <kbd>Command</kbd> <kbd>Shift</kbd> <kbd>Escape</kbd> at any moment. It takes effect at once, even mid-drag: the Space in hand is let go off the bar, which leaves it where it started, and Mission Control closes. Nothing else is touched.</p>
+</div>
+<p>Do not move the mouse or type while a run is in progress. The run is driving the pointer.</p>
+
+<h2 id="profiles">Settings: Profiles</h2>
+<p>The list on the left is every saved layout, with the screens it belongs to. Select one to see and change it.</p>
+<dl>
+  <dt>Name</dt><dd>What the menu shows. Edit it here.</dd>
+  <dt>Put Spaces back on the right display, in order</dt><dd>Restores which screen each Space is on and their left-to-right order, through Mission Control. This is the one most people want, and it is how a fullscreen app gets back to its screen without leaving fullscreen.</dd>
+  <dt>Move apps to their Space</dt><dd>Also moves each app's windows onto the Space they were saved on. This is per app, not per window: all of an app's windows move together, so a layout that had one app's windows on two Spaces cannot be put back exactly. With this off, only windows on the Space each screen is currently showing are placed, and the run reports the rest as not placed.</dd>
+  <dt>Re-enter fullscreen for apps that left it</dt><dd>Puts an app back into fullscreen if it was fullscreen when saved and is not now. Doing so rebuilds its Space at the end of the strip, which loses your order, so leave this off and let the first option move the Space instead.</dd>
+  <dt>Apps this profile moves</dt><dd>Every app the layout knows about, with how many windows and Spaces it holds for each. Untick an app and the layout never touches it. Apps that are not running are simply skipped. <span class="ui">Tick All</span> and <span class="ui">Untick All</span> do what they say.</dd>
+  <dt>Update to Current</dt><dd>Re-records the selected layout from how things are now. New apps are added, ticked.</dd>
+  <dt>Delete</dt><dd>Removes the layout. This cannot be undone.</dd>
+</dl>
+<p class="note">Applying is deliberately not a button here. Running a layout is a menu action, so editing one can never rearrange your desk by a misclick.</p>
+
+<h2 id="dock">Settings: Dock</h2>
+<dl>
+  <dt>Lock the Dock to one display</dt><dd>Turns the pointer hold on. Off, the Dock behaves as macOS normally has it.</dd>
+  <dt>Keep the Dock on</dt><dd><span class="ui">Main display</span> follows whichever screen has the menu bar and works at every desk. Pinning a specific monitor only applies at the desk that monitor is plugged into; elsewhere the lock is off.</dd>
+  <dt>Move Dock There Now</dt><dd>Walks the pointer to the chosen screen's bottom edge once, to bring the Dock across if it is somewhere else. Only when you press it.</dd>
+</dl>
+<p class="note">Do not run DeskPilot's Dock lock alongside another Dock-locking app. Both drive the pointer and they will fight.</p>
+
+<h2 id="general">Settings: General</h2>
+<dl>
+  <dt>Detect my desk and apply its layout automatically</dt><dd>Runs the matching layout when a screen is plugged in or unplugged and the resulting set of screens is one you have saved. See <a href="#auto">Automatic runs</a>.</dd>
+  <dt>Open DeskPilot at login</dt><dd>Starts it with your session. The app must be in Applications for this to work.</dd>
+  <dt>Permissions</dt><dd>Shows whether Accessibility is granted, with a button to open the right pane of System Settings.</dd>
+  <dt>Show Profiles Folder</dt><dd>Opens the folder holding your layouts, settings and the log.</dd>
+</dl>
+
+<h2 id="updates">Settings: Updates</h2>
+<p>Once a day DeskPilot reads its own release list on GitHub. Nothing about you is sent; it is a public list and the app carries no account or key.</p>
+<dl>
+  <dt>This Mac</dt><dd>The version installed.</dd>
+  <dt>Recommended</dt><dd>The newest build for everyone. <span class="ui">Install</span> appears when it is newer than this one. <span class="ui">Go Back</span> appears when you are on a beta ahead of it.</dd>
+  <dt>Beta</dt><dd>A newer build with new features, shown only when <span class="ui">Offer beta builds</span> is ticked.</dd>
+  <dt>Offer beta builds</dt><dd>Tick to be offered betas. Untick to see only recommended builds.</dd>
+  <dt>Check Now</dt><dd>Reads the list immediately instead of waiting for the daily check.</dd>
+  <dt>Previous versions</dt><dd>Older builds. <span class="ui">Go Back to This</span> installs one, if a new build does something wrong. Say what it was.</dd>
+</dl>
+<p>Installing downloads the disk image, checks it was signed by the same developer as this copy and that macOS accepts it, swaps it into Applications and relaunches. Layouts and settings are kept. When a newer build is published you are told once; after that it is a line in the menu and a button here.</p>
+
+<h2 id="auto">Automatic runs</h2>
+<p>With <span class="ui">Detect my desk</span> on, DeskPilot watches for the set of attached screens to change: something plugged in or unplugged. Starting the app counts as arriving too. Then:</p>
+<ol>
+  <li>If the new set of screens matches no saved layout, nothing happens. Plugging in an iPad or a projector does nothing unless you have saved a layout for that set.</li>
+  <li>If it matches, DeskPilot first checks, without touching anything, whether every Space and every managed window is already where the layout says. If so, nothing happens and the log says so.</li>
+  <li>If something is out of place, the run starts with the usual countdown and Stop.</li>
+</ol>
+<p>Rearranging the same screens does not count as arriving. A presentation starting, a resolution change, or the screens dropping and returning on wake are ignored. A second arrival within 30 seconds of a run is ignored as well.</p>
+
+<h2 id="files">What is stored, and the log</h2>
+<p>Everything is in <code>~/Library/Application Support/DeskPilot/</code>, readable only by you:</p>
+<table>
+  <tr><th>profiles.json</th><td>Your layouts. These include window titles.</td></tr>
+  <tr><th>settings.json</th><td>The switches in Settings.</td></tr>
+  <tr><th>log.txt</th><td>Every run, every Space drag and what the app read on screen, with the time. Capped at a quarter of a megabyte. It never holds a password or a key.</td></tr>
+</table>
+<p>When something goes wrong, send <code>log.txt</code> with the report. Settings, General, <span class="ui">Show Profiles Folder</span> opens the folder.</p>
+
+<h2 id="limits">Known limits</h2>
+<ul>
+  <li>A Space in <span class="ui">Split View</span> cannot be moved or separated. macOS offers no way to do it; DeskPilot never drops a Space onto another, which is how Split View is made.</li>
+  <li>A fullscreen app is moved by moving its Space. Its window is never taken out of fullscreen.</li>
+  <li>All of an app's windows move to a Space together.</li>
+  <li>A window that is on a Space not currently showing cannot be moved unless <span class="ui">Move apps to their Space</span> is on. The run reports it as not placed.</li>
+</ul>
+
+<h2 id="trouble">When something is off</h2>
+<dl>
+  <dt>The menu says no layouts are saved for this setup</dt><dd>A layout belongs to an exact set of screens. An extra screen, including an iPad, makes a different set. Disconnect it, or save a layout for that set too.</dd>
+  <dt>It says Accessibility is not granted</dt><dd>See the note under <a href="#setup">Setting it up</a>: remove and re-add DeskPilot in the Accessibility list.</dd>
+  <dt>"not placed" in the run summary</dt><dd>The window was not on a Space that was showing, or the app was not running. The log names each one.</dd>
+  <dt>"missing" in the run summary</dt><dd>A fullscreen app in the layout has no Space open right now, or DeskPilot could not tell which app owns a Space. The rest of the layout still ran.</dd>
+  <dt>A Space ended up in the wrong place</dt><dd>Send the log. It records where each drag was aimed and where the Space landed.</dd>
+</dl>
+</main>
+</body>
+</html>

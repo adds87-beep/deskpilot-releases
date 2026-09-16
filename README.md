@@ -7,6 +7,9 @@ Download the current build from the Releases page. Open the disk image, drag Des
 Applications, and launch it from there. It is signed and notarised, so macOS opens it
 without a warning.
 
+**The full guide**, covering setup, every menu item and setting, what a run does and what
+the summary means: **[DeskPilot Guide](https://adds87-beep.github.io/deskpilot-releases/guide.html)**.
+
 ## Getting started
 
 On first launch DeskPilot asks for **Accessibility** permission. It is required: moving
