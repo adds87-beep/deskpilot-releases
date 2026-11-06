@@ -55,6 +55,7 @@
   <a href="#run">What happens during a run</a>
   <a href="#profiles">Settings: Profiles</a>
   <a href="#dock">Settings: Dock</a>
+  <a href="#runs">Settings: Runs</a>
   <a href="#general">Settings: General</a>
   <a href="#updates">Settings: Updates</a>
   <a href="#auto">Automatic runs</a>
@@ -120,10 +121,9 @@
 <text x="46" y="234" class="t s">Handles fullscreen apps without quitting them. This is the one most people want.</text>
 <rect x="24" y="251" width="14" height="14" rx="4" fill="var(--card)" stroke="var(--muted)"/>
 <text x="46" y="262" class="t">Move apps onto their Space</text>
-<text x="46" y="278" class="t s">Per app, not per window: all of an app&#x27;s windows move together.</text>
-<rect x="24" y="295" width="14" height="14" rx="4" fill="var(--card)" stroke="var(--muted)"/>
-<text x="46" y="306" class="t">Put apps back into fullscreen</text>
-<text x="46" y="322" class="t s">Rebuilds the Space at the end of the strip, losing your order. Usually leave off.</text>
+<text x="46" y="278" class="t s">Each window goes back to the desktop it was saved on.</text>
+<text x="24" y="306" class="t">Full-screen apps are always put back</text>
+<text x="24" y="322" class="t s">Opened if shut and made full screen again before the Spaces are moved.</text>
 <text x="24" y="362" class="t h">WHICH APPS MAY IT MOVE?</text>
 <text x="24" y="380" class="t s">5 of 6 apps will be moved</text>
 <rect x="24" y="388" width="712" height="150" rx="6" fill="var(--card)" stroke="var(--line)"/>
@@ -198,10 +198,11 @@
 
 <h2 id="run">What happens during a run</h2>
 <ol>
-  <li>The screen dims and a panel appears with a <span class="ui">5 second countdown</span>. Nothing is touched until it reaches zero.</li>
-  <li>Spaces first, if the layout restores them. Mission Control opens and each Space that is on the wrong screen or in the wrong place is dragged once. Each drag is checked afterwards. Expect about ten seconds per Space.</li>
-  <li>Windows next: each managed window is moved to its saved screen, position and size.</li>
-  <li>The panel reports what it did and what it could not do, then closes. The same is written to the log.</li>
+  <li>The screen dims and a panel appears. An automatic run counts down first (5 seconds unless you change it in <a href="#runs">Runs</a>). Nothing is touched until it reaches zero.</li>
+  <li>Full-screen apps: any app saved in full screen that is shut is opened, and any that is in a window is put back in full screen.</li>
+  <li>Spaces, if the layout restores them. Mission Control opens, desktops are added or closed so each screen has the number saved, and each Space on the wrong screen or in the wrong place is dragged once. Each drag is checked afterwards. A desktop closed with windows on it hands them to another desktop; the next step puts them back.</li>
+  <li>Windows: each managed window goes to its saved screen, desktop, position and size. Apps with no saved place are left where they are.</li>
+  <li>The panel says whether everything is in place, and lists anything that didn't move with the reason. <span class="ui">Report This Problem</span> opens a filled-in report. It closes by itself unless you have asked to click OK (see <a href="#runs">Runs</a>).</li>
 </ol>
 <figure style="margin:0"><svg class="shot narrow" viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The run panel with its countdown">
 <defs><filter id="sh2"><feDropShadow dx="0" dy="8" stdDeviation="12" flood-opacity=".25"/></filter></defs>
@@ -215,7 +216,7 @@
 <text x="260" y="204" text-anchor="middle" class="t s">⌘⇧⎋ to stop</text>
 </svg><figcaption>The panel every run starts with. Nothing is touched until the countdown ends.</figcaption></figure>
 <div class="card">
-  <p><span class="ui">Stopping.</span> Press <span class="ui">Stop</span> on the panel or <kbd>Command</kbd> <kbd>Shift</kbd> <kbd>Escape</kbd> at any moment. It takes effect at once, even mid-drag: the Space in hand is let go off the bar, which leaves it where it started, and Mission Control closes. Nothing else is touched.</p>
+  <p><span class="ui">Stopping.</span> Press <span class="ui">Stop</span> on the panel or <kbd>Command</kbd> <kbd>Shift</kbd> <kbd>Escape</kbd> (or your own shortcut, set in <a href="#runs">Runs</a>) at any moment. It is instant: the panel closes, anything in hand is let go where it started, Mission Control closes, and nothing else is moved.</p>
 </div>
 <p>Do not move the mouse or type while a run is in progress. The run is driving the pointer.</p>
 
@@ -256,11 +257,9 @@
 <text x="284" y="230" class="t">Put Spaces back on the right display, in order</text>
 <rect x="262" y="243" width="14" height="14" rx="4" fill="var(--card)" stroke="var(--muted)"/>
 <text x="284" y="254" class="t">Move apps to their Space</text>
-<rect x="262" y="267" width="14" height="14" rx="4" fill="var(--card)" stroke="var(--muted)"/>
-<text x="284" y="278" class="t">Re-enter fullscreen for apps that left it</text>
-<text x="262" y="296" class="t s">Fullscreen recreates the Space at the end of the strip, so it loses</text>
-<text x="262" y="312" class="t s">your order. Usually leave it off and let the first option move the</text>
-<text x="262" y="328" class="t s">Space instead.</text>
+<text x="262" y="296" class="t s">An app saved in full screen is opened if it is shut and put back</text>
+<text x="262" y="312" class="t s">in full screen if it is in a window, before the Spaces are moved,</text>
+<text x="262" y="328" class="t s">so its Space goes back into its place with the rest.</text>
 <text x="262" y="346" class="t h">APPS THIS PROFILE MOVES</text>
 <text x="262" y="362" class="t s">5 of 6 apps will be moved</text>
 <rect x="262" y="370" width="412" height="108" rx="6" fill="var(--card)" stroke="var(--line)"/>
@@ -293,8 +292,8 @@
 <dl>
   <dt>Name</dt><dd>What the menu shows. Edit it here.</dd>
   <dt>Put Spaces back on the right display, in order</dt><dd>Restores which screen each Space is on and their left-to-right order, through Mission Control. This is the one most people want, and it is how a fullscreen app gets back to its screen without leaving fullscreen.</dd>
-  <dt>Move apps to their Space</dt><dd>Also moves each app's windows onto the Space they were saved on. This is per app, not per window: all of an app's windows move together, so a layout that had one app's windows on two Spaces cannot be put back exactly. With this off, only windows on the Space each screen is currently showing are placed, and the run reports the rest as not placed.</dd>
-  <dt>Re-enter fullscreen for apps that left it</dt><dd>Puts an app back into fullscreen if it was fullscreen when saved and is not now. Doing so rebuilds its Space at the end of the strip, which loses your order, so leave this off and let the first option move the Space instead.</dd>
+  <dt>Move apps to their Space</dt><dd>Also puts each window back on the desktop it was saved on, wherever it is now. An app's windows are brought over together, and any window saved on a different desktop of the same screen is then dragged onto its own desktop in Mission Control. With this off, only windows on the desktop each screen is showing are placed.</dd>
+  <dt>Full-screen apps</dt><dd>Always put back. An app that was full screen when you saved is opened if it is shut, and put back in full screen if it is in a window, before the Spaces are moved. Its Space is then carried into its saved place with the rest. Untick the app to leave it alone.</dd>
   <dt>Apps this profile moves</dt><dd>Every app the layout knows about, with how many windows and Spaces it holds for each. Untick an app and the layout never touches it. Apps that are not running are simply skipped. <span class="ui">Tick All</span> and <span class="ui">Untick All</span> do what they say.</dd>
   <dt>Update to Current</dt><dd>Re-records the selected layout from how things are now. New apps are added, ticked.</dd>
   <dt>Delete</dt><dd>Removes the layout. This cannot be undone.</dd>
@@ -340,6 +339,15 @@
 </dl>
 <p class="note">Do not run DeskPilot's Dock lock alongside another Dock-locking app. Both drive the pointer and they will fight.</p>
 
+<h2 id="runs">Settings: Runs</h2>
+<dl>
+  <dt>Countdown before an automatic run</dt><dd>How long the panel counts down before an automatic run touches anything, or <span class="ui">Start straight away</span>. A run you pick from the menu always starts straight away.</dd>
+  <dt>After logging in, wait before running</dt><dd>When DeskPilot starts because you have just logged in, it waits this long (2 minutes to start with) before checking your desk, so your apps have opened and are there to be put in place. <span class="ui">Don't wait</span> turns it off.</dd>
+  <dt>Stop shortcut</dt><dd>Click it, then press the keys you want. It needs at least one of Command, Shift, Option or Control. Command Escape on its own is refused, because macOS keeps it. <span class="ui">Reset</span> goes back to Command Shift Escape.</dd>
+  <dt>Wait for me to click OK when everything has moved</dt><dd>Off: the message closes by itself after a moment and you are back at your desk. On: it stays until you click OK.</dd>
+  <dt>Wait for me to click OK when something didn't move</dt><dd>On to start with. The message lists what didn't move and why, and stays until you click OK.</dd>
+</dl>
+
 <h2 id="general">Settings: General</h2>
 <figure style="margin:0"><svg class="shot" viewBox="0 0 760 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DeskPilot">
 <defs><filter id="sh" x="-5%" y="-5%" width="110%" height="115%"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity=".18"/></filter></defs>
@@ -362,7 +370,7 @@
 <text x="54" y="120" class="t">Detect my desk and apply its layout automatically</text>
 <text x="54" y="138" class="t s">Only when the attached displays change to a set you have saved. Moving a window or a Space never</text>
 <text x="54" y="154" class="t s">triggers it, and neither does connecting something unrecognised such as an iPad. A panel appears first</text>
-<text x="54" y="170" class="t s">with a 5 second countdown and Stop stays available for the whole run.</text>
+<text x="54" y="170" class="t s">with a countdown (set in Runs) and Stop stays available for the whole run.</text>
 <rect x="32" y="199" width="14" height="14" rx="4" fill="var(--accent)" stroke="var(--accent)"/>
 <path d="M35 206 l3 3 l5 -6" stroke="#fff" stroke-width="2" fill="none"/>
 <text x="54" y="210" class="t">Open DeskPilot at login</text>
@@ -442,6 +450,7 @@
   <li>If it matches, DeskPilot first checks, without touching anything, whether every Space and every managed window is already where the layout says. If so, nothing happens and the log says so.</li>
   <li>If something is out of place, the run starts with the usual countdown and Stop.</li>
 </ol>
+<p>Just after you log in, DeskPilot waits before doing this (2 minutes unless you change it in <a href="#runs">Runs</a>), so your apps have had time to open.</p>
 <p>Rearranging the same screens does not count as arriving. A presentation starting, a resolution change, or the screens dropping and returning on wake are ignored. A second arrival within 30 seconds of a run is ignored as well.</p>
 
 <h2 id="files">What is stored, and the log</h2>
@@ -451,23 +460,21 @@
   <tr><th>settings.json</th><td>The switches in Settings.</td></tr>
   <tr><th>log.txt</th><td>Every run, every Space drag and what the app read on screen, with the time. Capped at a quarter of a megabyte. It never holds a password or a key.</td></tr>
 </table>
-<p>When something goes wrong, send <code>log.txt</code> with the report. Settings, General, <span class="ui">Show Profiles Folder</span> opens the folder.</p>
+<p>When something goes wrong, press <span class="ui">Report This Problem</span> on the message at the end of the run, or pick <span class="ui">Report a Problem with the Last Run…</span> from the menu. It opens a filled-in report on the releases page with the log for that run. Window titles, email addresses and your user folder are taken out first, because the page is public. If the log is long, all of it is copied for you to paste in.</p>
 
 <h2 id="limits">Known limits</h2>
 <ul>
   <li>A Space in <span class="ui">Split View</span> cannot be moved or separated. macOS offers no way to do it; DeskPilot never drops a Space onto another, which is how Split View is made.</li>
   <li>A fullscreen app is moved by moving its Space. Its window is never taken out of fullscreen.</li>
-  <li>All of an app's windows move to a Space together.</li>
-  <li>A window that is on a Space not currently showing cannot be moved unless <span class="ui">Move apps to their Space</span> is on. The run reports it as not placed.</li>
+  <li>A window on a desktop that isn't showing is only moved when <span class="ui">Move apps to their Space</span> is on.</li>
 </ul>
 
 <h2 id="trouble">When something is off</h2>
 <dl>
   <dt>The menu says no layouts are saved for this setup</dt><dd>A layout belongs to an exact set of screens. An extra screen, including an iPad, makes a different set. Disconnect it, or save a layout for that set too.</dd>
   <dt>It says Accessibility is not granted</dt><dd>See the note under <a href="#setup">Setting it up</a>: remove and re-add DeskPilot in the Accessibility list.</dd>
-  <dt>"not placed" in the run summary</dt><dd>The window was not on a Space that was showing, or the app was not running. The log names each one.</dd>
-  <dt>"missing" in the run summary</dt><dd>A fullscreen app in the layout has no Space open right now, or DeskPilot could not tell which app owns a Space. The rest of the layout still ran.</dd>
-  <dt>A Space ended up in the wrong place</dt><dd>Send the log. It records where each drag was aimed and where the Space landed.</dd>
+  <dt>Something didn't move</dt><dd>The message at the end of the run names it and says why. Press <span class="ui">Report This Problem</span> if the reason doesn't make sense.</dd>
+  <dt>A Space or window ended up in the wrong place</dt><dd>Report it from the menu. The log records where each drag was aimed and where it landed.</dd>
 </dl>
 </main>
 </body>
